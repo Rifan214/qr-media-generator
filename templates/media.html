@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}
+Media Viewer - QR Media Generator
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-10">
+
+        <div class="card">
+
+            <div class="card-body p-4 p-lg-5">
+
+                <div class="text-center mb-4">
+
+                    <h2 class="page-title">
+                        Media Viewer
+                    </h2>
+
+                    <p class="text-muted">
+                        Media yang dibuka melalui QR Code.
+                    </p>
+
+                </div>
+
+                <!-- INFORMASI MEDIA -->
+
+                <div class="row mb-4">
+
+                    <div class="col-md-4 mb-3">
+
+                        <div class="card border h-100">
+
+                            <div class="card-body text-center">
+
+                                <h6 class="text-muted">
+                                    Jumlah Scan
+                                </h6>
+
+                                <h2 class="mb-0">
+                                    {{ media.scan_count }}
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <div class="card border h-100">
+
+                            <div class="card-body text-center">
+
+                                <h6 class="text-muted">
+                                    Tipe Media
+                                </h6>
+
+                                <h5 class="mb-0">
+
+                                    {% if media.media_type == "image" %}
+                                    Gambar
+                                    {% else %}
+                                    Video
+                                    {% endif %}
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <div class="card border h-100">
+
+                            <div class="card-body text-center">
+
+                                <h6 class="text-muted">
+                                    Tanggal Upload
+                                </h6>
+
+                                <small>
+
+                                    {{ media.created_at.strftime("%d-%m-%Y %H:%M") }}
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- TAMPILAN MEDIA -->
+
+                {% if media.media_type == "image" %}
+
+                <div class="text-center">
+
+                    <img src="{{ url_for('image_file', filename=media.stored_filename) }}" alt="Image"
+                        class="img-fluid rounded shadow">
+
+                </div>
+
+                {% endif %}
+
+                {% if media.media_type == "video" %}
+
+                <div class="text-center">
+
+                    <video class="w-100 rounded shadow" controls preload="metadata">
+
+                        <source src="{{ url_for('video_file', filename=media.stored_filename) }}"
+                            type="video/{{ media.file_extension }}">
+
+                        Browser Anda tidak mendukung pemutaran video.
+
+                    </video>
+
+                </div>
+
+                {% endif %}
+
+                <!-- DETAIL MEDIA -->
+
+                <div class="card border mt-4">
+
+                    <div class="card-body">
+
+                        <h5 class="mb-3">
+                            Informasi File
+                        </h5>
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <tr>
+
+                                    <th width="220">
+                                        Nama File
+                                    </th>
+
+                                    <td>
+                                        {{ media.original_filename }}
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <th>
+                                        Ekstensi
+                                    </th>
+
+                                    <td>
+                                        {{ media.file_extension }}
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <th>
+                                        Ukuran File
+                                    </th>
+
+                                    <td>
+                                        {{ (media.file_size / 1024 / 1024)|round(2) }} MB
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <th>
+                                        Public Token
+                                    </th>
+
+                                    <td style="word-break: break-all;">
+                                        {{ media.public_token }}
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- TOMBOL KEMBALI -->
+
+                <div class="text-center mt-4">
+
+                    <button onclick="history.back()" class="btn btn-secondary btn-lg">
+
+                        Kembali
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

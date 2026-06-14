@@ -1,0 +1,261 @@
+/* ==================================================
+   GLOBAL
+================================================== */
+
+:root {
+    --primary: #0d6efd;
+    --success: #198754;
+    --danger: #dc3545;
+    --dark: #212529;
+    --light: #f8f9fa;
+    --border: #e9ecef;
+}
+
+body {
+    background: #f5f7fb;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ==================================================
+   NAVBAR
+================================================== */
+
+.navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* ==================================================
+   CARD
+================================================== */
+
+.card {
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* ==================================================
+   BUTTON
+================================================== */
+
+.btn {
+    transition: all 0.25s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ==================================================
+   UPLOAD AREA
+================================================== */
+
+.upload-area {
+    border: 2px dashed #ced4da;
+
+    border-radius: 16px;
+
+    padding: 40px;
+
+    background: white;
+
+    text-align: center;
+
+    transition: 0.3s;
+}
+
+.upload-area:hover {
+    border-color: var(--primary);
+
+    background: #f8fbff;
+}
+
+.upload-preview {
+    display: none;
+
+    margin-top: 20px;
+}
+
+.upload-preview img {
+    max-width: 100%;
+
+    max-height: 350px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+/* ==================================================
+   DASHBOARD TABLE
+================================================== */
+
+.table {
+    vertical-align: middle;
+}
+
+.table thead {
+    background: #f1f3f5;
+}
+
+.table tbody tr {
+    transition: 0.2s;
+}
+
+.table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* ==================================================
+   QR PREVIEW
+================================================== */
+
+.qr-preview {
+    width: 110px;
+
+    transition: 0.25s;
+}
+
+.qr-preview:hover {
+    transform: scale(1.08);
+}
+
+/* ==================================================
+   MEDIA VIEW
+================================================== */
+
+.media-container {
+    text-align: center;
+}
+
+.media-container img {
+    max-width: 100%;
+
+    border-radius: 12px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.media-container video {
+    width: 100%;
+
+    border-radius: 12px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ==================================================
+   STAT CARD
+================================================== */
+
+.stat-card {
+    border: none;
+
+    border-radius: 16px;
+
+    background: white;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+.stat-number {
+    font-size: 2rem;
+
+    font-weight: 700;
+}
+
+/* ==================================================
+   LOADING OVERLAY
+================================================== */
+
+.loading-overlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(255, 255, 255, 0.85);
+
+    z-index: 9999;
+
+    display: none;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-direction: column;
+}
+
+.loading-spinner {
+    width: 70px;
+    height: 70px;
+
+    border: 8px solid #dee2e6;
+
+    border-top: 8px solid var(--primary);
+
+    border-radius: 50%;
+
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    margin-top: 15px;
+
+    font-weight: 600;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================================================
+   FOOTER
+================================================== */
+
+.footer {
+    margin-top: auto;
+}
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 768px) {
+    .upload-area {
+        padding: 25px;
+    }
+
+    .qr-preview {
+        width: 80px;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

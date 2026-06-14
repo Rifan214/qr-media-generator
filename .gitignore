@@ -1,0 +1,47 @@
+# Python
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+
+venv/
+env/
+.venv/
+
+# Database
+
+instance/
+*.db
+*.sqlite3
+
+# Upload Files
+
+uploads/images/*
+uploads/videos/*
+
+# Generated QR
+
+static/qr/*
+
+# Logs
+
+*.log
+
+# Environment Variables
+
+.env
+
+# VS Code
+
+.vscode/
+
+# JetBrains
+
+.idea/
+
+# Windows
+
+Thumbs.db
+desktop.ini

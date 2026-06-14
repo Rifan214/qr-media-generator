@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+500 Server Error
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5 text-center">
+
+    <h1 class="display-3">
+        500
+    </h1>
+
+    <h3>
+        Terjadi Kesalahan Server
+    </h3>
+
+    <p class="text-muted">
+
+        Silakan coba lagi beberapa saat.
+
+    </p>
+
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+
+        Kembali ke Beranda
+
+    </a>
+
+</div>
+
+{% endblock %}

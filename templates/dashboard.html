@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard - QR Media Generator
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-4">
+
+    <div class="col-lg-6">
+
+        <h2 class="page-title">
+            Dashboard Media
+        </h2>
+
+        <p class="text-muted">
+            Kelola media, QR Code, statistik, dan aktivitas scan.
+        </p>
+
+    </div>
+
+    <div class="col-lg-6 text-lg-end">
+
+        <a
+            href="/"
+            class="btn btn-primary">
+
+            Upload Media Baru
+
+        </a>
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- STATISTIK -->
+<!-- ===================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card stat-card">
+
+            <div class="card-body text-center">
+
+                <div class="text-muted mb-2">
+                    Total Media
+                </div>
+
+                <div class="stat-number">
+                    {{ total_media }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card stat-card">
+
+            <div class="card-body text-center">
+
+                <div class="text-muted mb-2">
+                    Total Gambar
+                </div>
+
+                <div class="stat-number">
+                    {{ total_images }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card stat-card">
+
+            <div class="card-body text-center">
+
+                <div class="text-muted mb-2">
+                    Total Video
+                </div>
+
+                <div class="stat-number">
+                    {{ total_videos }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card stat-card">
+
+            <div class="card-body text-center">
+
+                <div class="text-muted mb-2">
+                    Total Scan
+                </div>
+
+                <div class="stat-number">
+                    {{ total_scans }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- SEARCH -->
+<!-- ===================================================== -->
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <form method="GET" action="/dashboard">
+
+            <div class="row g-2">
+
+                <div class="col-md-10">
+
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Cari nama file, tipe media, atau ekstensi..."
+                        value="{{ search }}">
+
+                </div>
+
+                <div class="col-md-2 d-grid">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Cari
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- TABEL MEDIA -->
+<!-- ===================================================== -->
+
+<div class="card">
+
+    <div class="card-header bg-primary text-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                Daftar Media
+            </h5>
+
+            <span>
+                {{ pagination.total }} Data
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if media_list %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>QR Code</th>
+                    <th>Nama File</th>
+                    <th>Tipe</th>
+                    <th>Ukuran</th>
+                    <th>Scan</th>
+                    <th>Tanggal</th>
+                    <th width="220">Aksi</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for media in media_list %}
+
+                <tr>
+
+                    <td>
+                        {{ media.id }}
+                    </td>
+
+                    <td>
+
+                        <img
+                            src="{{ url_for('static', filename='qr/' + media.qr_filename) }}"
+                            class="qr-preview"
+                            alt="QR Code">
+
+                    </td>
+
+                    <td>
+
+                        <strong>
+                            {{ media.original_filename }}
+                        </strong>
+
+                    </td>
+
+                    <td>
+
+                        {% if media.media_type == "image" %}
+
+                        <span class="badge bg-success">
+                            Gambar
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-warning text-dark">
+                            Video
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {{ (media.file_size / 1024 / 1024)|round(2) }} MB
+
+                    </td>
+
+                    <td>
+
+                        <span class="badge bg-info">
+
+                            {{ media.scan_count }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        {{ media.created_at.strftime("%d-%m-%Y %H:%M") }}
+
+                    </td>
+
+                    <td>
+
+                        <div class="d-grid gap-2">
+
+                            <a
+                                href="/media/{{ media.public_token }}"
+                                target="_blank"
+                                class="btn btn-sm btn-primary">
+
+                                Lihat Media
+
+                            </a>
+
+                            <a
+                                href="/download-media/{{ media.id }}"
+                                class="btn btn-sm btn-secondary">
+
+                                Download Media
+
+                            </a>
+
+                            <a
+                                href="/download-qr/{{ media.qr_filename }}"
+                                class="btn btn-sm btn-success">
+
+                                Download QR
+
+                            </a>
+
+                            <a
+                                href="/delete/{{ media.id }}"
+                                onclick="return confirm('Yakin ingin menghapus media ini?')"
+                                class="btn btn-sm btn-danger">
+
+                                Hapus
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-5">
+
+            <h4>
+                Data Tidak Ditemukan
+            </h4>
+
+            <p class="text-muted">
+
+                Tidak ada media yang cocok dengan pencarian.
+
+            </p>
+
+            <a
+                href="/dashboard"
+                class="btn btn-primary">
+
+                Reset Pencarian
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- PAGINATION -->
+<!-- ===================================================== -->
+
+{% if pagination.pages > 1 %}
+
+<nav class="mt-4">
+
+    <ul class="pagination justify-content-center">
+
+        {% if pagination.has_prev %}
+
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="{{ url_for('dashboard', page=pagination.prev_num, search=search) }}">
+
+                Sebelumnya
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        {% for page_num in pagination.iter_pages(
+            left_edge=2,
+            right_edge=2,
+            left_current=2,
+            right_current=2
+        ) %}
+
+            {% if page_num %}
+
+                {% if page_num == pagination.page %}
+
+                <li class="page-item active">
+
+                    <span class="page-link">
+
+                        {{ page_num }}
+
+                    </span>
+
+                </li>
+
+                {% else %}
+
+                <li class="page-item">
+
+                    <a
+                        class="page-link"
+                        href="{{ url_for('dashboard', page=page_num, search=search) }}">
+
+                        {{ page_num }}
+
+                    </a>
+
+                </li>
+
+                {% endif %}
+
+            {% endif %}
+
+        {% endfor %}
+
+        {% if pagination.has_next %}
+
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="{{ url_for('dashboard', page=pagination.next_num, search=search) }}">
+
+                Berikutnya
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</nav>
+
+{% endif %}
+
+{% endblock %}

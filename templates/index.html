@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}
+Upload Media - QR Media Generator
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="card">
+
+            <div class="card-body p-5">
+
+                <div class="text-center mb-4">
+
+                    <div class="upload-icon">
+                        📷
+                    </div>
+
+                    <h2 class="page-title mt-3">
+                        Upload Media
+                    </h2>
+
+                    <p class="text-muted">
+                        Upload gambar atau video kemudian sistem akan membuat QR Code secara otomatis.
+                    </p>
+
+                </div>
+
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+                            Pilih File
+                        </label>
+
+                        <input type="file" name="media_file" class="form-control" required>
+
+                    </div>
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-6">
+
+                            <div class="card border">
+
+                                <div class="card-body">
+
+                                    <h6>
+                                        Format Gambar
+                                    </h6>
+
+                                    <ul class="mb-0">
+                                        <li>JPG</li>
+                                        <li>JPEG</li>
+                                        <li>PNG</li>
+                                        <li>WEBP</li>
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="card border">
+
+                                <div class="card-body">
+
+                                    <h6>
+                                        Format Video
+                                    </h6>
+
+                                    <ul class="mb-0">
+                                        <li>MP4</li>
+                                        <li>WEBM</li>
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="d-grid">
+
+                        <button type="submit" class="btn btn-primary btn-lg">
+
+                            Upload dan Generate QR
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="card mt-4">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+                    Cara Kerja
+                </h5>
+
+                <ol class="mb-0">
+
+                    <li>Upload gambar atau video.</li>
+
+                    <li>File disimpan ke server.</li>
+
+                    <li>URL publik dibuat otomatis.</li>
+
+                    <li>QR Code dibuat otomatis.</li>
+
+                    <li>Scan QR dari perangkat apa saja.</li>
+
+                    <li>Media langsung terbuka di browser.</li>
+
+                </ol>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
