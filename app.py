@@ -14,6 +14,7 @@ from flask import (
     session
 )
 
+from dotenv import load_dotenv
 from functools import wraps
 from werkzeug.utils import secure_filename
 
@@ -21,11 +22,28 @@ from config import Config
 from models import db, Media
 from sqlalchemy import func, or_
 
+load_dotenv()
 
 app = Flask(__name__)
 app.config.from_object(Config)
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "admin123"
+ADMIN_USERNAME = os.getenv(
+    "ADMIN_USERNAME"
+)
+
+ADMIN_PASSWORD = os.getenv(
+    "ADMIN_PASSWORD"
+)
+if not ADMIN_USERNAME:
+
+    raise ValueError(
+        "ADMIN_USERNAME belum diatur"
+    )
+
+if not ADMIN_PASSWORD:
+
+    raise ValueError(
+        "ADMIN_PASSWORD belum diatur"
+    )
 
 db.init_app(app)
 
