@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}
+Upload Berhasil
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center p-5">
+
+                <h2 class="text-success mb-3">
+                    ✓ Upload Berhasil
+                </h2>
+
+                <p class="text-muted">
+
+                    QR Code berhasil dibuat dan siap digunakan.
+
+                </p>
+
+                <img src="{{ url_for('static', filename='qr/' + media.qr_filename) }}" class="img-fluid rounded mb-4"
+                    style="max-width:300px;">
+
+                <div class="d-grid gap-2">
+
+                    <a href="{{ url_for('download_qr_public', filename=media.qr_filename) }}" class="btn btn-success">
+
+                        Download QR Code
+
+                    </a>
+
+                    <button class="btn btn-info text-white" onclick="copyPublicLink()">
+
+                        Copy Public URL
+
+                    </button>
+
+                    <a href="/media/{{ media.public_token }}" target="_blank" class="btn btn-primary">
+
+                        Lihat Media
+
+                    </a>
+
+                    <a href="/clear-upload-session" class="btn btn-secondary">
+
+                        Upload Lagi
+
+                    </a>
+
+                </div>
+
+                <input type="hidden" id="publicUrl" value="{{ public_url }}">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function copyPublicLink() {
+
+        navigator.clipboard.writeText(
+            document.getElementById(
+                "publicUrl"
+            ).value
+        );
+
+        alert(
+            "Link berhasil disalin"
+        );
+    }
+
+</script>
+
+{% endblock %}

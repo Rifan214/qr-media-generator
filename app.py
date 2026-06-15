@@ -234,63 +234,91 @@ def logout():
     )
 
 # ==================================================
-# RENAME MEDIA
+# CLEAR UPLOAD SESSION
 # ==================================================
 @app.route(
-    "/rename-media",
-    methods=["POST"]
+    "/clear-upload-session"
 )
-@login_required
-def rename_media():
+def clear_upload_session():
 
-    media_id = request.form.get(
-        "media_id"
-    )
-
-    new_name = request.form.get(
-        "new_name"
-    )
-
-    media = Media.query.get_or_404(
-        media_id
-    )
-
-    new_name = new_name.strip()
-
-    if not new_name:
-
-        flash(
-            "Nama file tidak boleh kosong",
-            "danger"
-        )
-
-        return redirect(
-            url_for("dashboard")
-        )
-
-    if len(new_name) > 255:
-
-        flash(
-            "Nama file terlalu panjang",
-            "danger"
-        )
-
-        return redirect(
-            url_for("dashboard")
-        )
-
-    media.original_filename = new_name
-
-    db.session.commit()
-
-    flash(
-        "Nama file berhasil diubah",
-        "success"
+    session.pop(
+        "last_uploaded_token",
+        None
     )
 
     return redirect(
-        url_for("dashboard")
+        url_for("index")
     )
+
+
+# ==================================================
+# HALAMAN BERHASIL UPLOAD
+# ==================================================
+@app.route(
+    "/upload-success/<token>"
+)
+def upload_success(token):
+
+    media = Media.query.filter_by(
+    public_token=token
+    ).first_or_404()
+
+    last_token = session.get(
+        "last_uploaded_token"
+    )
+
+    if not last_token:
+
+        flash(
+            "Halaman upload sudah tidak tersedia",
+            "warning"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
+    if last_token != token:
+
+        flash(
+            "Anda tidak memiliki akses ke halaman ini",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
+    if (
+        session.get(
+            "last_uploaded_token"
+        )
+        != token
+    ):
+
+        flash(
+            "Halaman tidak tersedia",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
+    public_url = (
+        request.host_url.rstrip("/")
+        + url_for(
+            "public_media",
+            token=media.public_token
+        )
+    )
+
+    return render_template(
+        "upload_success.html",
+        media=media,
+        public_url=public_url
+    )
+
 
 # ==================================================
 # UPLOAD MEDIA
@@ -496,13 +524,20 @@ def upload_media():
     db.session.add(media)
     db.session.commit()
 
+    session[
+        "last_uploaded_token"
+    ] = media.public_token
+
     flash(
-        "Media berhasil diupload",
+        "Media berhasil diupload dan QR berhasil dibuat",
         "success"
     )
 
     return redirect(
-        url_for("dashboard")
+        url_for(
+            "upload_success",
+            token=media.public_token
+        )
     )
 
 
@@ -751,6 +786,20 @@ def download_qr(filename):
         return redirect(
             url_for("dashboard")
         )
+
+    return send_from_directory(
+        app.config["QR_FOLDER"],
+        filename,
+        as_attachment=True
+    )
+
+# ==================================================
+# DOWNLOAD QR PUBLIK
+# ==================================================
+@app.route(
+    "/download-public-qr/<filename>"
+)
+def download_qr_public(filename):
 
     return send_from_directory(
         app.config["QR_FOLDER"],

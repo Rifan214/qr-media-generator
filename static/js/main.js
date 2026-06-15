@@ -30,20 +30,20 @@ document.addEventListener(
 
 document.addEventListener(
     "DOMContentLoaded",
-    function(){
+    function () {
 
         const renameModal =
             document.getElementById(
                 "renameModal"
             );
 
-        if(!renameModal){
+        if (!renameModal) {
             return;
         }
 
         renameModal.addEventListener(
             "show.bs.modal",
-            function(event){
+            function (event) {
 
                 const button =
                     event.relatedTarget;
@@ -69,20 +69,20 @@ document.addEventListener(
 
 document.addEventListener(
     "DOMContentLoaded",
-    function(){
+    function () {
 
         const qrModal =
             document.getElementById(
                 "qrModal"
             );
 
-        if(!qrModal){
+        if (!qrModal) {
             return;
         }
 
         qrModal.addEventListener(
             "show.bs.modal",
-            function(event){
+            function (event) {
 
                 const button =
                     event.relatedTarget;
@@ -108,7 +108,7 @@ document.addEventListener(
 
 document.addEventListener(
     "DOMContentLoaded",
-    function(){
+    function () {
 
         const dropZone =
             document.getElementById(
@@ -120,16 +120,16 @@ document.addEventListener(
                 "mediaInput"
             );
 
-        if(
+        if (
             !dropZone ||
             !input
-        ){
+        ) {
             return;
         }
 
         dropZone.addEventListener(
             "click",
-            function(){
+            function () {
 
                 input.click();
 
@@ -138,7 +138,7 @@ document.addEventListener(
 
         dropZone.addEventListener(
             "dragover",
-            function(e){
+            function (e) {
 
                 e.preventDefault();
 
@@ -150,7 +150,7 @@ document.addEventListener(
 
         dropZone.addEventListener(
             "dragleave",
-            function(){
+            function () {
 
                 dropZone.classList.remove(
                     "dragover"
@@ -160,7 +160,7 @@ document.addEventListener(
 
         dropZone.addEventListener(
             "drop",
-            function(e){
+            function (e) {
 
                 e.preventDefault();
 
@@ -185,13 +185,13 @@ document.addEventListener(
 
 document.addEventListener(
     "click",
-    function(event){
+    function (event) {
 
-        if(
+        if (
             event.target.classList.contains(
                 "copy-link-btn"
             )
-        ){
+        ) {
 
             const url =
                 event.target.dataset.url;
@@ -204,7 +204,7 @@ document.addEventListener(
                 "Copied!";
 
             setTimeout(
-                function(){
+                function () {
 
                     event.target.innerText =
                         "Copy Link";
@@ -266,12 +266,19 @@ function createPreviewArea() {
 
 function handleFileSelect(event) {
 
-    const mediaName =
-    document.getElementById(
-        "mediaName"
-    );
+    const file =
+        event.target.files[0];
 
-    if(mediaName){
+    if (!file) {
+        return;
+    }
+
+    const mediaName =
+        document.getElementById(
+            "mediaName"
+        );
+
+    if (mediaName) {
 
         const filename =
             file.name.replace(
@@ -281,13 +288,6 @@ function handleFileSelect(event) {
 
         mediaName.value =
             filename;
-    }
-
-    const file =
-        event.target.files[0];
-
-    if (!file) {
-        return;
     }
 
     validateFileSize(file);
