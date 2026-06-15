@@ -437,23 +437,23 @@ document.addEventListener(
 
         createLoadingOverlay();
 
-        const forms =
-            document.querySelectorAll(
-                "form"
+        const uploadForm =
+            document.getElementById(
+                "uploadForm"
             );
 
-        forms.forEach(
-            function (form) {
+        if (
+            uploadForm
+        ) {
 
-                form.addEventListener(
-                    "submit",
-                    function () {
+            uploadForm.addEventListener(
+                "submit",
+                function () {
 
-                        showLoading();
-                    }
-                );
-            }
-        );
+                    showLoading();
+                }
+            );
+        }
     }
 );
 
@@ -482,7 +482,7 @@ function createLoadingOverlay() {
         <div
             class="loading-text">
 
-            Mengupload Media...
+            Mengupload media dan membuat QR Code...
 
         </div>
         `;
