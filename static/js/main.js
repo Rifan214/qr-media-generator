@@ -24,6 +24,198 @@ document.addEventListener(
     }
 );
 
+// ======================================
+// RENAME MODAL
+// ======================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        const renameModal =
+            document.getElementById(
+                "renameModal"
+            );
+
+        if(!renameModal){
+            return;
+        }
+
+        renameModal.addEventListener(
+            "show.bs.modal",
+            function(event){
+
+                const button =
+                    event.relatedTarget;
+
+                document.getElementById(
+                    "renameMediaId"
+                ).value =
+                    button.dataset.id;
+
+                document.getElementById(
+                    "renameMediaName"
+                ).value =
+                    button.dataset.name;
+            }
+        );
+    }
+);
+
+
+// ======================================
+// QR CODE MODAL
+// ======================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        const qrModal =
+            document.getElementById(
+                "qrModal"
+            );
+
+        if(!qrModal){
+            return;
+        }
+
+        qrModal.addEventListener(
+            "show.bs.modal",
+            function(event){
+
+                const button =
+                    event.relatedTarget;
+
+                document.getElementById(
+                    "qrModalImage"
+                ).src =
+                    button.dataset.qr;
+
+                document.getElementById(
+                    "qrModalTitle"
+                ).innerText =
+                    button.dataset.name;
+            }
+        );
+    }
+);
+
+
+// ======================================
+// DRAG & DROP
+// ======================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        const dropZone =
+            document.getElementById(
+                "dropZone"
+            );
+
+        const input =
+            document.getElementById(
+                "mediaInput"
+            );
+
+        if(
+            !dropZone ||
+            !input
+        ){
+            return;
+        }
+
+        dropZone.addEventListener(
+            "click",
+            function(){
+
+                input.click();
+
+            }
+        );
+
+        dropZone.addEventListener(
+            "dragover",
+            function(e){
+
+                e.preventDefault();
+
+                dropZone.classList.add(
+                    "dragover"
+                );
+            }
+        );
+
+        dropZone.addEventListener(
+            "dragleave",
+            function(){
+
+                dropZone.classList.remove(
+                    "dragover"
+                );
+            }
+        );
+
+        dropZone.addEventListener(
+            "drop",
+            function(e){
+
+                e.preventDefault();
+
+                dropZone.classList.remove(
+                    "dragover"
+                );
+
+                input.files =
+                    e.dataTransfer.files;
+
+                input.dispatchEvent(
+                    new Event("change")
+                );
+            }
+        );
+    }
+);
+
+// ======================================
+// COPY LINK BUTTON
+// ======================================
+
+document.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target.classList.contains(
+                "copy-link-btn"
+            )
+        ){
+
+            const url =
+                event.target.dataset.url;
+
+            navigator.clipboard.writeText(
+                url
+            );
+
+            event.target.innerText =
+                "Copied!";
+
+            setTimeout(
+                function(){
+
+                    event.target.innerText =
+                        "Copy Link";
+
+                },
+                2000
+            );
+        }
+    }
+);
+
 
 // ======================================
 // PREVIEW AREA
@@ -73,6 +265,23 @@ function createPreviewArea() {
 // ======================================
 
 function handleFileSelect(event) {
+
+    const mediaName =
+    document.getElementById(
+        "mediaName"
+    );
+
+    if(mediaName){
+
+        const filename =
+            file.name.replace(
+                /\.[^/.]+$/,
+                ""
+            );
+
+        mediaName.value =
+            filename;
+    }
 
     const file =
         event.target.files[0];

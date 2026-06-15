@@ -1,6 +1,7 @@
 import os
 import uuid
 import qrcode
+import re
 
 from flask import (
     Flask,
@@ -13,6 +14,7 @@ from flask import (
     session
 )
 
+from functools import wraps
 from werkzeug.utils import secure_filename
 
 from config import Config
@@ -22,6 +24,8 @@ from sqlalchemy import func, or_
 
 app = Flask(__name__)
 app.config.from_object(Config)
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "admin123"
 
 db.init_app(app)
 
@@ -47,6 +51,27 @@ with app.app_context():
 # ==================================================
 # HELPER FUNCTION
 # ==================================================
+
+def login_required(func):
+
+    @wraps(func)
+
+    def wrapper(*args, **kwargs):
+
+        if not session.get(
+            "admin_logged_in"
+        ):
+
+            return redirect(
+                url_for("login")
+            )
+
+        return func(
+            *args,
+            **kwargs
+        )
+
+    return wrapper
 
 def get_extension(filename):
 
@@ -140,6 +165,133 @@ def index():
     return render_template("index.html")
 
 
+
+# ==================================================
+# ROUTE LOGIN
+# ==================================================
+@app.route(
+    "/login",
+    methods=["GET", "POST"]
+)
+def login():
+
+    if request.method == "POST":
+
+        username = request.form.get(
+            "username"
+        )
+
+        password = request.form.get(
+            "password"
+        )
+
+        if (
+            username == ADMIN_USERNAME
+            and
+            password == ADMIN_PASSWORD
+        ):
+
+            session[
+                "admin_logged_in"
+            ] = True
+
+            flash(
+                "Login berhasil",
+                "success"
+            )
+
+            return redirect(
+                url_for(
+                    "dashboard"
+                )
+            )
+
+        flash(
+            "Username atau password salah",
+            "danger"
+        )
+
+    return render_template(
+        "login.html"
+    )
+
+
+# ==================================================
+# ROUTE LOGOUT
+# ==================================================
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    flash(
+        "Logout berhasil",
+        "success"
+    )
+
+    return redirect(
+        url_for("login")
+    )
+
+# ==================================================
+# RENAME MEDIA
+# ==================================================
+@app.route(
+    "/rename-media",
+    methods=["POST"]
+)
+@login_required
+def rename_media():
+
+    media_id = request.form.get(
+        "media_id"
+    )
+
+    new_name = request.form.get(
+        "new_name"
+    )
+
+    media = Media.query.get_or_404(
+        media_id
+    )
+
+    new_name = new_name.strip()
+
+    if not new_name:
+
+        flash(
+            "Nama file tidak boleh kosong",
+            "danger"
+        )
+
+        return redirect(
+            url_for("dashboard")
+        )
+
+    if len(new_name) > 255:
+
+        flash(
+            "Nama file terlalu panjang",
+            "danger"
+        )
+
+        return redirect(
+            url_for("dashboard")
+        )
+
+    media.original_filename = new_name
+
+    db.session.commit()
+
+    flash(
+        "Nama file berhasil diubah",
+        "success"
+    )
+
+    return redirect(
+        url_for("dashboard")
+    )
+
 # ==================================================
 # UPLOAD MEDIA
 # ==================================================
@@ -159,6 +311,50 @@ def upload_media():
         return redirect(url_for("index"))
 
     # ==========================================
+    # NAMA FILE DARI FORM
+    # ==========================================
+
+    media_name = request.form.get(
+        "media_name",
+        ""
+    ).strip()
+
+    if not media_name:
+
+        flash(
+            "Nama media wajib diisi",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
+    if len(media_name) > 100:
+
+        flash(
+            "Nama media terlalu panjang",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
+    if not re.match(
+        r"^[a-zA-Z0-9_\-\s]+$",
+        media_name
+    ):
+
+        flash(
+            "Nama media hanya boleh berisi huruf, angka, spasi, tanda - dan _",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+    # ==========================================
     # VALIDASI MIME TYPE
     # ==========================================
 
@@ -173,10 +369,20 @@ def upload_media():
             url_for("index")
         )
 
-    filename = secure_filename(file.filename)
+    original_filename = secure_filename(
+        file.filename
+    )
 
-    extension = get_extension(filename)
+    extension = get_extension(
+        original_filename
+    )
+
     file_size = get_file_size(file)
+
+    # nama yang diinput user + ekstensi asli
+    filename = secure_filename(
+        f"{media_name}.{extension}"
+    )
 
     media_type = None
     upload_folder = None
@@ -185,7 +391,7 @@ def upload_media():
     # VALIDASI GAMBAR
     # ==========================================
 
-    if is_allowed_image(filename):
+    if is_allowed_image(original_filename):
 
         media_type = "image"
 
@@ -206,7 +412,7 @@ def upload_media():
     # VALIDASI VIDEO
     # ==========================================
 
-    elif is_allowed_video(filename):
+    elif is_allowed_video(original_filename):
 
         media_type = "video"
 
@@ -246,7 +452,6 @@ def upload_media():
     )
 
     file.seek(0)
-
     file.save(save_path)
 
     # ==========================================
@@ -297,9 +502,7 @@ def upload_media():
     )
 
     return redirect(
-        url_for(
-            "dashboard"
-        )
+        url_for("dashboard")
     )
 
 
@@ -308,6 +511,7 @@ def upload_media():
 # ==================================================
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
 
     page = request.args.get(
@@ -464,6 +668,7 @@ def video_file(filename):
 # ==================================================
 
 @app.route("/delete/<int:media_id>")
+@login_required
 def delete_media(media_id):
 
     media = Media.query.get_or_404(
@@ -528,6 +733,7 @@ def delete_media(media_id):
 # ==================================================
 
 @app.route("/download-qr/<filename>")
+@login_required
 def download_qr(filename):
 
     qr_path = os.path.join(
@@ -553,6 +759,7 @@ def download_qr(filename):
     )
 
 @app.route("/download-media/<int:media_id>")
+@login_required
 def download_media(media_id):
 
     media = Media.query.get_or_404(media_id)

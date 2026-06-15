@@ -32,13 +32,21 @@ Upload Media - QR Media Generator
 
                 <form action="/upload" method="POST" enctype="multipart/form-data">
 
-                    <div class="mb-4">
+                    <div class="upload-area" id="dropZone">
 
-                        <label class="form-label fw-bold">
-                            Pilih File
-                        </label>
+                        <h4>
 
-                        <input type="file" name="media_file" class="form-control" required>
+                            Drag & Drop File
+
+                        </h4>
+
+                        <p class="text-muted">
+
+                            atau klik untuk memilih file
+
+                        </p>
+
+                        <input type="file" name="media_file" id="mediaInput" class="form-control" required>
 
                     </div>
 
@@ -87,6 +95,19 @@ Upload Media - QR Media Generator
                             </div>
 
                         </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Nama Media
+
+                        </label>
+
+                        <input maxlength="100" type="text" name="media_name" id="mediaName" class="form-control"
+                            placeholder="Contoh: Poster Seminar AI">
 
                     </div>
 

@@ -259,3 +259,43 @@ body {
         width: 100%;
     }
 }
+.media-thumbnail {
+    width: 80px;
+    height: 80px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    border: 1px solid #ddd;
+}
+
+.video-thumbnail {
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    font-size: 35px;
+
+    border-radius: 10px;
+
+    background: #f1f1f1;
+}
+
+.upload-area {
+    cursor: pointer;
+}
+
+.upload-area.dragover {
+    border-color: #0d6efd;
+
+    background: #eef5ff;
+}
+
+.qr-clickable {
+    cursor: pointer;
+}

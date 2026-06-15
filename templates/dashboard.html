@@ -22,9 +22,7 @@ Dashboard - QR Media Generator
 
     <div class="col-lg-6 text-lg-end">
 
-        <a
-            href="/"
-            class="btn btn-primary">
+        <a href="/" class="btn btn-primary">
 
             Upload Media Baru
 
@@ -136,20 +134,14 @@ Dashboard - QR Media Generator
 
                 <div class="col-md-10">
 
-                    <input
-                        type="text"
-                        name="search"
-                        class="form-control"
-                        placeholder="Cari nama file, tipe media, atau ekstensi..."
-                        value="{{ search }}">
+                    <input type="text" name="search" class="form-control"
+                        placeholder="Cari nama file, tipe media, atau ekstensi..." value="{{ search }}">
 
                 </div>
 
                 <div class="col-md-2 d-grid">
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary">
 
                         Cari
 
@@ -197,133 +189,163 @@ Dashboard - QR Media Generator
 
                 <thead>
 
-                <tr>
+                    <tr>
 
-                    <th>ID</th>
-                    <th>QR Code</th>
-                    <th>Nama File</th>
-                    <th>Tipe</th>
-                    <th>Ukuran</th>
-                    <th>Scan</th>
-                    <th>Tanggal</th>
-                    <th width="220">Aksi</th>
+                        <th>ID</th>
+                        <th>QR Code</th>
+                        <th>Preview</th>
+                        <th>Nama File</th>
+                        <th>Tipe</th>
+                        <th>Ukuran</th>
+                        <th>Scan</th>
+                        <th>Tanggal</th>
+                        <th width="220">Aksi</th>
 
-                </tr>
+                    </tr>
 
                 </thead>
 
                 <tbody>
 
-                {% for media in media_list %}
+                    {% for media in media_list %}
 
-                <tr>
+                    <tr>
 
-                    <td>
-                        {{ media.id }}
-                    </td>
+                        <td>
+                            {{ media.id }}
+                        </td>
 
-                    <td>
+                        <td>
 
-                        <img
-                            src="{{ url_for('static', filename='qr/' + media.qr_filename) }}"
-                            class="qr-preview"
-                            alt="QR Code">
+                            <img src="{{ url_for('static', filename='qr/' + media.qr_filename) }}"
+                                class="qr-preview qr-clickable" alt="QR Code" data-bs-toggle="modal"
+                                data-bs-target="#qrModal"
+                                data-qr="{{ url_for('static', filename='qr/' + media.qr_filename) }}"
+                                data-name="{{ media.original_filename }}">
 
-                    </td>
+                        </td>
 
-                    <td>
+                        <td>
 
-                        <strong>
-                            {{ media.original_filename }}
-                        </strong>
+                            {% if media.media_type == "image" %}
 
-                    </td>
+                            <img src="{{ url_for('image_file', filename=media.stored_filename) }}"
+                                class="media-thumbnail" alt="Preview">
 
-                    <td>
+                            {% else %}
 
-                        {% if media.media_type == "image" %}
+                            <div class="video-thumbnail">
 
-                        <span class="badge bg-success">
-                            Gambar
-                        </span>
+                                🎥
 
-                        {% else %}
+                            </div>
 
-                        <span class="badge bg-warning text-dark">
-                            Video
-                        </span>
+                            {% endif %}
 
-                        {% endif %}
+                        </td>
 
-                    </td>
+                        <td>
 
-                    <td>
+                            <strong>
+                                {{ media.original_filename }}
+                            </strong>
 
-                        {{ (media.file_size / 1024 / 1024)|round(2) }} MB
+                        </td>
 
-                    </td>
+                        <td>
 
-                    <td>
+                            {% if media.media_type == "image" %}
 
-                        <span class="badge bg-info">
+                            <span class="badge bg-success">
+                                Gambar
+                            </span>
 
-                            {{ media.scan_count }}
+                            {% else %}
 
-                        </span>
+                            <span class="badge bg-warning text-dark">
+                                Video
+                            </span>
 
-                    </td>
+                            {% endif %}
 
-                    <td>
+                        </td>
 
-                        {{ media.created_at.strftime("%d-%m-%Y %H:%M") }}
+                        <td>
 
-                    </td>
+                            {{ (media.file_size / 1024 / 1024)|round(2) }} MB
 
-                    <td>
+                        </td>
 
-                        <div class="d-grid gap-2">
+                        <td>
 
-                            <a
-                                href="/media/{{ media.public_token }}"
-                                target="_blank"
-                                class="btn btn-sm btn-primary">
+                            <span class="badge bg-info">
 
-                                Lihat Media
+                                {{ media.scan_count }}
 
-                            </a>
+                            </span>
 
-                            <a
-                                href="/download-media/{{ media.id }}"
-                                class="btn btn-sm btn-secondary">
+                        </td>
 
-                                Download Media
+                        <td>
 
-                            </a>
+                            {{ media.created_at.strftime("%d-%m-%Y %H:%M") }}
 
-                            <a
-                                href="/download-qr/{{ media.qr_filename }}"
-                                class="btn btn-sm btn-success">
+                        </td>
 
-                                Download QR
+                        <td>
 
-                            </a>
+                            <div class="d-grid gap-2">
 
-                            <a
-                                href="/delete/{{ media.id }}"
-                                onclick="return confirm('Yakin ingin menghapus media ini?')"
-                                class="btn btn-sm btn-danger">
+                                <a href="/media/{{ media.public_token }}" target="_blank"
+                                    class="btn btn-sm btn-primary">
 
-                                Hapus
+                                    Lihat Media
 
-                            </a>
+                                </a>
 
-                        </div>
+                                <button class="btn btn-sm btn-info copy-link-btn" data-url="{{ url_for('public_media',
+                                token=media.public_token,
+                                _external=True) }}">
 
-                    </td>
+                                    Copy Link
 
-                </tr>
+                                </button>
 
-                {% endfor %}
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#renameModal" data-id="{{ media.id }}"
+                                    data-name="{{ media.original_filename }}">
+
+                                    Rename
+
+                                </button>
+
+                                <a href="/download-media/{{ media.id }}" class="btn btn-sm btn-secondary">
+
+                                    Download Media
+
+                                </a>
+
+                                <a href="/download-qr/{{ media.qr_filename }}" class="btn btn-sm btn-success">
+
+                                    Download QR
+
+                                </a>
+
+                                <a href="/delete/{{ media.id }}"
+                                    onclick="return confirm('Yakin ingin menghapus media ini?')"
+                                    class="btn btn-sm btn-danger">
+
+                                    Hapus
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
 
                 </tbody>
 
@@ -345,9 +367,7 @@ Dashboard - QR Media Generator
 
             </p>
 
-            <a
-                href="/dashboard"
-                class="btn btn-primary">
+            <a href="/dashboard" class="btn btn-primary">
 
                 Reset Pencarian
 
@@ -375,9 +395,7 @@ Dashboard - QR Media Generator
 
         <li class="page-item">
 
-            <a
-                class="page-link"
-                href="{{ url_for('dashboard', page=pagination.prev_num, search=search) }}">
+            <a class="page-link" href="{{ url_for('dashboard', page=pagination.prev_num, search=search) }}">
 
                 Sebelumnya
 
@@ -388,43 +406,41 @@ Dashboard - QR Media Generator
         {% endif %}
 
         {% for page_num in pagination.iter_pages(
-            left_edge=2,
-            right_edge=2,
-            left_current=2,
-            right_current=2
+        left_edge=2,
+        right_edge=2,
+        left_current=2,
+        right_current=2
         ) %}
 
-            {% if page_num %}
+        {% if page_num %}
 
-                {% if page_num == pagination.page %}
+        {% if page_num == pagination.page %}
 
-                <li class="page-item active">
+        <li class="page-item active">
 
-                    <span class="page-link">
+            <span class="page-link">
 
-                        {{ page_num }}
+                {{ page_num }}
 
-                    </span>
+            </span>
 
-                </li>
+        </li>
 
-                {% else %}
+        {% else %}
 
-                <li class="page-item">
+        <li class="page-item">
 
-                    <a
-                        class="page-link"
-                        href="{{ url_for('dashboard', page=page_num, search=search) }}">
+            <a class="page-link" href="{{ url_for('dashboard', page=page_num, search=search) }}">
 
-                        {{ page_num }}
+                {{ page_num }}
 
-                    </a>
+            </a>
 
-                </li>
+        </li>
 
-                {% endif %}
+        {% endif %}
 
-            {% endif %}
+        {% endif %}
 
         {% endfor %}
 
@@ -432,9 +448,7 @@ Dashboard - QR Media Generator
 
         <li class="page-item">
 
-            <a
-                class="page-link"
-                href="{{ url_for('dashboard', page=pagination.next_num, search=search) }}">
+            <a class="page-link" href="{{ url_for('dashboard', page=pagination.next_num, search=search) }}">
 
                 Berikutnya
 
@@ -449,5 +463,97 @@ Dashboard - QR Media Generator
 </nav>
 
 {% endif %}
+
+<!-- ===================================================== -->
+<!-- QR MODAL -->
+<!-- ===================================================== -->
+<div class="modal fade" id="qrModal" tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="qrModalTitle">
+
+                    QR Preview
+
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body text-center">
+
+                <img id="qrModalImage" class="img-fluid rounded">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- RENAME MODAL -->
+<!-- ===================================================== -->
+
+<div class="modal fade" id="renameModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form method="POST" action="/rename-media">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+
+                        Rename Media
+
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="renameMediaId" name="media_id">
+
+                    <label class="form-label">
+
+                        Nama File
+
+                    </label>
+
+                    <input type="text" id="renameMediaName" name="new_name" class="form-control" required>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="submit" class="btn btn-warning">
+
+                        Simpan
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 {% endblock %}
